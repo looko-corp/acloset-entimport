@@ -8,8 +8,8 @@ import (
 	"os"
 	"strings"
 
-	"ariga.io/entimport/internal/entimport"
-	"ariga.io/entimport/internal/mux"
+	"github.com/looko-corp/acloset-entimport/internal/entimport"
+	"github.com/looko-corp/acloset-entimport/internal/mux"
 )
 
 var (

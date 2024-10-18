@@ -79,6 +79,8 @@ func (p *Postgres) field(column *schema.Column) (f ent.Field, err error) {
 		f = p.convertSerial(typ, name)
 	case *postgres.UUIDType:
 		f = field.UUID(name, uuid.New())
+	case *postgres.ArrayType:
+		f = p.convertArray(typ, name)
 	default:
 		return nil, fmt.Errorf("entimport: unsupported type %q for column %v", typ, column.Name)
 	}
@@ -121,4 +123,19 @@ func (p *Postgres) convertSerial(typ *postgres.SerialType, name string) ent.Fiel
 		SchemaType(map[string]string{
 			dialect.Postgres: typ.T, // Override Postgres.
 		})
+}
+
+func (p *Postgres) convertArray(typ *postgres.ArrayType, name string) (f ent.Field) {
+	if typ.Type == nil {
+		f = field.JSON(name, json.RawMessage{})
+	}
+	switch typ.Type.(type) {
+	case *schema.IntegerType:
+		f = field.Ints(name)
+	case *schema.FloatType:
+		f = field.Floats(name)
+	case *schema.StringType:
+		f = field.Strings(name)
+	}
+	return f
 }
